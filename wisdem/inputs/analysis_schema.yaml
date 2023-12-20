@@ -1413,7 +1413,7 @@ properties:
                     surge_period: &period
                         type: object
                         default: {}
-                        description: Ensure that the rigid body period stays within bounds
+                        description: Ensure that the rigid body period stays within bounds. Can be computed with both RAFT and FloatingSE when used in WEIS.  The higher fidelity option will be used when active. 
                         properties:
                             flag: *flag
                             lower_bound: &periodminmax
