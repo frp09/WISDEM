@@ -29,6 +29,7 @@ class PoseOptimization(object):
             "SLSQP",
             "Nelder-Mead",
             "COBYLA",
+            "basinhopping",
         ]
 
         self.pyoptsparse_methods = [
@@ -284,13 +285,40 @@ class PoseOptimization(object):
                 step_calc = opt_options["step_calc"]
             wt_opt.model.approx_totals(method="fd", step=step_size, form=opt_options["form"], step_calc=step_calc)
 
-            # Set optimization solver and options. First, Scipy's SLSQP and COBYLA
+            # FP; set Scipy's basinhopping -> global optimization
             if opt_options["solver"] in self.scipy_methods:
+                wt_opt.driver = om.ScipyOptimizeDriver()
+                wt_opt.driver.options["optimizer"] = opt_options["solver"] 
+
+                options_keys = ["tol", "max_iter", "disp"]
+                opt_settings_keys = ["rhobeg", "catol", "adaptive"]
+                mapped_keys = {"max_iter": "maxiter"}
+
+                mapped_keys = {
+
+                wt_opt = self._set_optimizer_properties(wt_opt, options_keys, opt_settings_keys, mapped_keys)
+            
+            # Set optimization solver and options. First, Scipy's SLSQP and COBYLA
+            elif opt_options["solver"] in self.scipy_methods:
                 wt_opt.driver = om.ScipyOptimizeDriver()
                 wt_opt.driver.options["optimizer"] = opt_options["solver"]
 
                 options_keys = ["tol", "max_iter", "disp"]
-                opt_settings_keys = ["rhobeg", "catol", "adaptive"]
+                opt_settings_keys = ["niter", 
+                                     "T", 
+                                     "stepsize", 
+                                     "minimizer_kwargs", 
+                                     "take_step"=None, 
+                                     "accept_test"=None, 
+                                     "callback"=None, 
+                                     "interval"=50, 
+                                     "disp"=False, 
+                                     "niter_success"=None, 
+                                     "seed"=None, 
+                                     "*", 
+                                     "target_accept_rate"=0.5, 
+                                     "stepwise_factor"=0.9]
+                
                 mapped_keys = {"max_iter": "maxiter"}
                 wt_opt = self._set_optimizer_properties(wt_opt, options_keys, opt_settings_keys, mapped_keys)
 
