@@ -295,20 +295,21 @@ class PoseOptimization(object):
 
                 opt_settings_keys = ["niter", 
                      "T", 
-                     "stepsize", 
-                     "minimizer_kwargs", 
-                     "take_step"=None, 
-                     "accept_test"=None, 
-                     "callback"=None, 
-                     "interval"=50, 
-                     "disp"=False, 
-                     "niter_success"=None, 
-                     "seed"=None, 
-                     "*", 
-                     "target_accept_rate"=0.5, 
-                     "stepwise_factor"=0.9]
+                     "stepsize",                        # not sure if this needs to be set 
+                     "minimizer_kwargs",                # this NEEDS TO BE SET. Following lines
+                     # "take_step"=None,                # default step-taking algorithm is good here
+                     "accept_test",                     # look into this: possible way to enforce variable bounds?
+                     # "callback",                      # default value should be ok
+                     "interval",                        # how often to update stepsize, default = 50, why not = 1?
+                     "disp",                            # default value should be ok, disp = False
+                     "niter_success", 
+                     # "seed"=None,                     # default value should be ok
+                     # "target_accept_rate"=0.5,        # default value should be ok
+                     # "stepwise_factor"=0.9            # default value should be ok
+                ]
 
-                opt_options["minimizer_kwargs"] = {"maxiter": opt_options["max_iter"],
+                opt_options["minimizer_kwargs"] = {"method" = "SLSQP",
+                                                    "maxiter": opt_options["max_iter"],
                                                    "tol": opt_options["tol"],
                                                    "disp": opt_options["disp"],
                                                   }
