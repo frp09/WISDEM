@@ -286,15 +286,32 @@ class PoseOptimization(object):
             wt_opt.model.approx_totals(method="fd", step=step_size, form=opt_options["form"], step_calc=step_calc)
 
             # FP; set Scipy's basinhopping -> global optimization
-            if opt_options["solver"] in self.scipy_methods:
+            if opt_options["solver"] == "basinhopping":
                 wt_opt.driver = om.ScipyOptimizeDriver()
                 wt_opt.driver.options["optimizer"] = opt_options["solver"] 
 
                 options_keys = ["tol", "max_iter", "disp"]
-                opt_settings_keys = ["rhobeg", "catol", "adaptive"]
                 mapped_keys = {"max_iter": "maxiter"}
 
-                mapped_keys = {
+                opt_settings_keys = ["niter", 
+                     "T", 
+                     "stepsize", 
+                     "minimizer_kwargs", 
+                     "take_step"=None, 
+                     "accept_test"=None, 
+                     "callback"=None, 
+                     "interval"=50, 
+                     "disp"=False, 
+                     "niter_success"=None, 
+                     "seed"=None, 
+                     "*", 
+                     "target_accept_rate"=0.5, 
+                     "stepwise_factor"=0.9]
+
+                opt_options["minimizer_kwargs"] = {"maxiter": opt_options["max_iter"],
+                                                   "tol": opt_options["tol"],
+                                                   "disp": opt_options["disp"],
+                                                  }
 
                 wt_opt = self._set_optimizer_properties(wt_opt, options_keys, opt_settings_keys, mapped_keys)
             
@@ -304,20 +321,7 @@ class PoseOptimization(object):
                 wt_opt.driver.options["optimizer"] = opt_options["solver"]
 
                 options_keys = ["tol", "max_iter", "disp"]
-                opt_settings_keys = ["niter", 
-                                     "T", 
-                                     "stepsize", 
-                                     "minimizer_kwargs", 
-                                     "take_step"=None, 
-                                     "accept_test"=None, 
-                                     "callback"=None, 
-                                     "interval"=50, 
-                                     "disp"=False, 
-                                     "niter_success"=None, 
-                                     "seed"=None, 
-                                     "*", 
-                                     "target_accept_rate"=0.5, 
-                                     "stepwise_factor"=0.9]
+                opt_settings_keys = ["rhobeg", "catol", "adaptive"]
                 
                 mapped_keys = {"max_iter": "maxiter"}
                 wt_opt = self._set_optimizer_properties(wt_opt, options_keys, opt_settings_keys, mapped_keys)
